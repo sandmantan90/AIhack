@@ -2,54 +2,41 @@ from cv2 import imwrite
 import os
 import librosa
 import numpy as np
-import matplotlib.pyplot as plt
-from librosa import display
+
 
 dur=10
-folders=[]
-
-n=np.zeros((1))
-address=r"C:\Users\KETAN\OneDrive\Electrical\CDAC-AI Hackthon\dataset"
+folders=['TAM','GUJ','MAR','HIN','TEL']
+n=0
+address=r"/home/aih04/dataset"
 os.chdir(address)
 f=0
 i=0
-dst = r'C:\Users\KETAN\OneDrive\Electrical\CDAC-AI Hackthon\dataset\trainInput.txt'
+dst = r'/home/aih04/LID/trainInput.txt'
 
 f1 = open(dst,'w')
-for root, subdirs, files in os.walk('.'):
-    print(root, 'lol',subdirs,'::')
-    if subdirs==[]:
-        f+=1
-        print(f)
-    for file in files:
-        address=root+'\\'+file
-        if (os.path.splitext(file)[1]=='.wav')&(file[0]!='.'):
-            
-            audio,fs=librosa.load(address,sr=16000)
-            j=0
-            while len(audio)<fs*dur:
-                j+=1
-                audio=np.concatenate((audio,audio),axis=0)
-                
-            
-            audio=audio[0:fs*dur]
-            S = librosa.feature.melspectrogram(audio, sr=fs, n_mels=129, fmax=5000,n_fft=1600, hop_length=320)
-            save_address='/home/aih04/dataset/train/'+str(n)
-            imwrite(save_address,S)
-    
-            
-            file= str(int(n))+' '+str((f-1))
-            f1.write(file+'\n')
-              
-            
+for f,folder in enumerate(folders):
+    os.chdir(address+'/'+folder)
+    for root, subdirs, files in os.walk('.'):
+        print(root, 'lol',subdirs,'::',files)
+        for fil in files:
+            load_address=address+'/'+folder+'/'+fil
+            if (os.path.splitext(fil)[1]=='.wav'):
+                audio,fs=librosa.load(load_address,sr=16000)
 
-            
-            print(S.shape)
-            print(f-1)
-            i+=1             
-           
-            
-            print(n,':',file)
-            n+=1
-f1.close()        
+                while len(audio)<fs*dur:
+                    j+=1
+                    audio=np.concatenate((audio,audio),axis=0)
+
+
+                audio=audio[0:fs*dur]
+                S = librosa.feature.melspectrogram(audio, sr=fs, n_mels=129, fmax=5000,n_fft=1600, hop_length=320)
+                save_address='/home/aih04/dataset/Train/'+str(int(n))+'.png'
+                imwrite(save_address,S)
+                file= str(int(n))+' '+str((f))
+                f1.write(file+'\n')
+                print(f,fil)
+                print(n,':',fil)
+                n+=1
+               #file number counter
+f1.close()
         
