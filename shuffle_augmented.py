@@ -1,1 +1,31 @@
+import random
+
+train_percent=90
+
+
+dst = r'/home/aih04/LID/Augmented_trainInput.txt'
+
+f1 = open(dst,'r')
+f=f1.readlines()
+
+
+random.shuffle(f)
+
+index=int(len(f)*train_percent/100)
+ftrain=f[0:index]
+ftest=f[index:-1]
+
+dst = r'/home/aih04/LID/AugTraintInput.txt'
+
+f1 = open(dst,'w')
+for i in ftrain:
+   f1.write(i)
+f1.close()
+
+dst = r'/home/aih04/LID/AugTestInput.txt'
+
+f2 = open(dst,'w')
+for i in ftest:
+   f2.write(i)
+f2.close()
 
