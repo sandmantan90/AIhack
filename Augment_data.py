@@ -13,49 +13,6 @@ os.chdir(address)
 
 dst = r'/home/aih04/LID/Augmented_trainInput.txt'
 
-f1 = open(dst,'w')
-for f,folder in enumerate(folders):
-    os.chdir(address+'/'+folder)
-    for root, subdirs, files in os.walk('.'):
-        print(root, 'lol',subdirs,'::',files)
-        for fil in files:
-            load_address=address+'/'+folder+'/'+fil
-            if (os.path.splitext(fil)[1]=='.wav'):
-                audio,fs=librosa.load(load_address,sr=16000)
-
-                while len(audio)<fs*dur:
-                    audio=np.concatenate((audio,audio),axis=0)
-
-                audio=audio[0:fs*dur]
-                audio1,audio2=augment(audio)
-                
-                S = librosa.feature.melspectrogram(audio, sr=fs, n_mels=129, fmax=5000,n_fft=1600, hop_length=320)
-                save_address='/home/aih04/dataset/Augmented_train/'+str(int(n))+'.png'
-                imwrite(save_address,S)
-                file= str(int(n))+' '+str((f))
-                f1.write(file+'\n')
-                n+=1
-                
-                S1 = librosa.feature.melspectrogram(audio1, sr=fs, n_mels=129, fmax=5000,n_fft=1600, hop_length=320)
-                save_address='/home/aih04/dataset/Augmented_train/'+str(int(n))+'.png'
-                imwrite(save_address,S1)
-                file= str(int(n))+' '+str((f))
-                f1.write(file+'\n')
-                n+=1
-                
-                S2 = librosa.feature.melspectrogram(audio2, sr=fs, n_mels=129, fmax=5000,n_fft=1600, hop_length=320)
-                save_address='/home/aih04/dataset/Augmented_train/'+str(int(n))+'.png'
-                imwrite(save_address,S2)
-                file= str(int(n))+' '+str((f))
-                f1.write(file+'\n')
-                n+=1
-                
-                
-                print(f,fil)
-                print(n,':',fil)
-                
-f1.close()
-
 def augment(data):
   dice = random.randint(0, 1)
   if bool(dice):
@@ -104,4 +61,49 @@ def stretch(data, rate=2):
 
         data=data[0:input_length]
     return data
+
+f1 = open(dst,'w')
+for f,folder in enumerate(folders):
+    os.chdir(address+'/'+folder)
+    for root, subdirs, files in os.walk('.'):
+        print(root, 'lol',subdirs,'::',files)
+        for fil in files:
+            load_address=address+'/'+folder+'/'+fil
+            if (os.path.splitext(fil)[1]=='.wav'):
+                audio,fs=librosa.load(load_address,sr=16000)
+
+                while len(audio)<fs*dur:
+                    audio=np.concatenate((audio,audio),axis=0)
+
+                audio=audio[0:fs*dur]
+                audio1,audio2=augment(audio)
+                
+                S = librosa.feature.melspectrogram(audio, sr=fs, n_mels=129, fmax=5000,n_fft=1600, hop_length=320)
+                save_address='/home/aih04/dataset/Augmented_train/'+str(int(n))+'.png'
+                imwrite(save_address,S)
+                file= str(int(n))+' '+str((f))
+                f1.write(file+'\n')
+                n+=1
+                
+                S1 = librosa.feature.melspectrogram(audio1, sr=fs, n_mels=129, fmax=5000,n_fft=1600, hop_length=320)
+                save_address='/home/aih04/dataset/Augmented_train/'+str(int(n))+'.png'
+                imwrite(save_address,S1)
+                file= str(int(n))+' '+str((f))
+                f1.write(file+'\n')
+                n+=1
+                
+                S2 = librosa.feature.melspectrogram(audio2, sr=fs, n_mels=129, fmax=5000,n_fft=1600, hop_length=320)
+                save_address='/home/aih04/dataset/Augmented_train/'+str(int(n))+'.png'
+                imwrite(save_address,S2)
+                file= str(int(n))+' '+str((f))
+                f1.write(file+'\n')
+                n+=1
+                
+                
+                print(f,fil)
+                print(n,':',fil)
+                
+f1.close()
+
+
   
