@@ -33,7 +33,7 @@ def augment(data):
     
     data2=change_pitch(data,-1.5)
     data2=stretch(data2, 1.23)
-    data2= np.roll(data2, int(np.floor(len(aud2)/3)))
+    data2= np.roll(data2, int(np.floor(len(data2)/3)))
     
   return(data1,data2)
     
