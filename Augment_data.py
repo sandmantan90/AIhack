@@ -1,6 +1,6 @@
 '''
 read each audio file and make 2 augmented copies of each.
-augmentation includes random pitch shift, random time scaling, time shifting and random magnitude noise addition
+augmentation includes random pitch shift, random time scaling, time shifting and random magnitude noise addition.
 '''
 
 from cv2 import imwrite
