@@ -17,6 +17,7 @@ address=r"/home/aih04/dataset"
 os.chdir(address)
 
 dst = r'/home/aih04/LID/Augmented_trainInput.txt'
+noise,fs=librosa.load(r"/content/drive/My Drive/noise7.wav",sr=16000)
 
 def addNoise(data,noise=noise):
     noise_mag=np.random.uniform(0,.1)
