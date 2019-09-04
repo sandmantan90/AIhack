@@ -13,13 +13,19 @@ os.chdir(address)
 
 dst = r'/home/aih04/LID/Augmented_trainInput.txt'
 
+def addNoise(data,noise=noise):
+    noise_mag=np.random.uniform(0,.1)
+    data+=noise[:10*fs]*noise_mag
+    
+    return data
+
 def augment(data):
   dice = random.randint(0, 1)
   if bool(dice):
     
     data1=change_pitch(data,1.5)
     data1=stretch(data1, 1.23)
-    data1= np.roll(data1, int(2*np.floor(len(data1)/3)))
+    data1= np.roll(data1, int(2*np.floor(len(data1)/3)))#make the content different
     
     data2=change_pitch(data,-1.5)
     data2=stretch(data2, .81)
@@ -78,6 +84,10 @@ for f,folder in enumerate(folders):
                 audio=audio[0:fs*dur]
                 audio1,audio2=augment(audio)
                 
+                #add noise
+                for aud in [audio,audio1,audio2]:
+                  aud=addNoise(aud)
+                                
                 S = librosa.feature.melspectrogram(audio, sr=fs, n_mels=129, fmax=5000,n_fft=1600, hop_length=320)
                 save_address='/home/aih04/dataset/Augmented_train/'+str(int(n))+'.png'
                 imwrite(save_address,S)
