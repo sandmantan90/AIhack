@@ -14,5 +14,5 @@ def dataPreprocesses(inputWav)
    audio=audio[0:fs*dur]
    S = librosa.feature.melspectrogram(audio, sr=fs, n_mels=129, fmax=5000,n_fft=1600, hop_length=320)
   
-   imwrite('myImage.png',S)
+   imwrite('myImage.png',librosa.power_to_db(S,ref=np.max))
 
