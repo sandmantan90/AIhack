@@ -154,6 +154,6 @@ for f,folder in enumerate(folders):
                         imwrite(save_address,melspec)
                         file= str(int(n))+' '+str((f))
                         f1.write(file+'\n')
-                        n+=1 ]
-                print(f,':',n,':',fil)
+                        n+=1 
+                print(f,':',n,'',m,':',fil)
 f1.close()
