@@ -7,11 +7,13 @@ import random
 dur=6#sec
 
 folders=['TAM','GUJ','MAR','HIN','TEL']
-n=0#file number counter
+n=0#train file number counter
+m=0#train file number counter
 address=r"/home/aih04/dataset"
 os.chdir(address)
 
-dst = r'/home/aih04/dataset/Input.txt'
+dst1 = r'/home/aih04/dataset/TrainInput.txt'
+dst2 = r'/home/aih04/dataset/TestInput.txt'
 noise,fs=librosa.load(r"/home/aih04/LID3/noise7.wav",sr=16000)#CHANGE THIS ADDRESS
 
 
@@ -73,7 +75,8 @@ def stretch(data, rate=2):
         data=data[0:input_length]
     return data
 
-f1 = open(dst,'w+')
+f1 = open(dst1,'w+')
+f2 = open(dst2,'w+')
 for f,folder in enumerate(folders):
     os.chdir(address+'/'+folder)
     for root, subdirs, files in os.walk('.'):
@@ -104,44 +107,61 @@ for f,folder in enumerate(folders):
              
                 for j in range(int(noFrames)):
                     clip = audio[j*samples:(j+1)*samples]   
+                                                       
+                    val=np.random.uniform(0,1)
                     
-                    clip1,clip2 = augment(clip)
-                    
-                    #for clip
-                    melspec = librosa.feature.melspectrogram(clip, sr = samples,
-                                                             n_mels = 129, fmax = 5000,
-                                                             n_fft = 1600, hop_length = 192)                    
-                    melspec=librosa.power_to_db(melspec,ref=np.max)
+                    if val<.9:
+                        clip1,clip2 = augment(clip)
+                        
+                        #for clip
+                        melspec = librosa.feature.melspectrogram(clip, sr = samples,
+                                                                 n_mels = 129, fmax = 5000,
+                                                                 n_fft = 1600, hop_length = 192)                    
+                        melspec=librosa.power_to_db(melspec,ref=np.max)
 
-                    save_address='/home/aih04/dataset/TrainData/'+str(int(n))+'.png'#CHANGE THIS ADDRESS
-                    imwrite(save_address,melspec)
-                    file= str(int(n))+' '+str((f))
-                    f1.write(file+'\n')
-                    n+=1
-                    
-                    #for clip1
-                    melspec = librosa.feature.melspectrogram(clip1, sr = samples,
-                                                             n_mels = 129, fmax = 5000,
-                                                             n_fft = 1600, hop_length = 192)                    
-                    melspec=librosa.power_to_db(melspec,ref=np.max)
+                        save_address='/home/aih04/dataset/TrainData/'+str(int(n))+'.png'#CHANGE THIS ADDRESS
+                        imwrite(save_address,melspec)
+                        file= str(int(n))+' '+str((f))
+                        f1.write(file+'\n')
+                        n+=1
 
-                    save_address='/home/aih04/dataset/TrainData/'+str(int(n))+'.png'#CHANGE THIS ADDRESS
-                    imwrite(save_address,melspec)
-                    file= str(int(n))+' '+str((f))
-                    f1.write(file+'\n')
-                    n+=1
-                    
-                    #for clip2
-                    melspec = librosa.feature.melspectrogram(clip2, sr = samples,
-                                                             n_mels = 129, fmax = 5000,
-                                                             n_fft = 1600, hop_length = 192)                    
-                    melspec=librosa.power_to_db(melspec,ref=np.max)
+                        #for clip1
+                        melspec = librosa.feature.melspectrogram(clip1, sr = samples,
+                                                                 n_mels = 129, fmax = 5000,
+                                                                 n_fft = 1600, hop_length = 192)                    
+                        melspec=librosa.power_to_db(melspec,ref=np.max)
 
-                    save_address='/home/aih04/dataset/TrainData/'+str(int(n))+'.png'#CHANGE THIS ADDRESS
-                    imwrite(save_address,melspec)
-                    file= str(int(n))+' '+str((f))
-                    f1.write(file+'\n')
-                    n+=1        
+                        save_address='/home/aih04/dataset/TrainData/'+str(int(n))+'.png'#CHANGE THIS ADDRESS
+                        imwrite(save_address,melspec)
+                        file= str(int(n))+' '+str((f))
+                        f1.write(file+'\n')
+                        n+=1
+
+                        #for clip2
+                        melspec = librosa.feature.melspectrogram(clip2, sr = samples,
+                                                                 n_mels = 129, fmax = 5000,
+                                                                 n_fft = 1600, hop_length = 192)                    
+                        melspec=librosa.power_to_db(melspec,ref=np.max)
+
+                        save_address='/home/aih04/dataset/TrainData/'+str(int(n))+'.png'#CHANGE THIS ADDRESS
+                        imwrite(save_address,melspec)
+                        file= str(int(n))+' '+str((f))
+                        f1.write(file+'\n')
+                        n+=1 
+                    else:
+                        melspec = librosa.feature.melspectrogram(clip, sr = samples,
+                                                                 n_mels = 129, fmax = 5000,
+                                                                 n_fft = 1600, hop_length = 192)                    
+                        melspec=librosa.power_to_db(melspec,ref=np.max)
+
+                        save_address='/home/aih04/dataset/TestData/'+str(int(m))+'.png'#CHANGE THIS ADDRESS
+                        imwrite(save_address,melspec)
+                        file= str(int(m))+' '+str((f))
+                        f2.write(file+'\n')
+                        m+=1
+
+                   
+                     
                                                                    
                 print(f,':',n,':',fil)
                 
