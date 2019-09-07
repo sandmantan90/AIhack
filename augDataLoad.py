@@ -11,7 +11,7 @@ n=0#file number counter
 address=r"/home/aih04/dataset"
 os.chdir(address)
 
-dst = r'/home/aih04/LID/Augmented_trainInput.txt'
+dst = r'/home/aih04/dataset/Input.txt'
 noise,fs=librosa.load(r"/home/aih04/LID3/noise7.wav",sr=16000)#CHANGE THIS ADDRESS
 
 
@@ -73,7 +73,7 @@ def stretch(data, rate=2):
         data=data[0:input_length]
     return data
 
-f1 = open(dst,'w')
+f1 = open(dst,'w+')
 for f,folder in enumerate(folders):
     os.chdir(address+'/'+folder)
     for root, subdirs, files in os.walk('.'):
@@ -113,7 +113,7 @@ for f,folder in enumerate(folders):
                                                              n_fft = 1600, hop_length = 192)                    
                     melspec=librosa.power_to_db(melspec,ref=np.max)
 
-                    save_address='/home/aih04/dataset/Augmented_train/'+str(int(n))+'.png'#CHANGE THIS ADDRESS
+                    save_address='/home/aih04/dataset/TrainData/'+str(int(n))+'.png'#CHANGE THIS ADDRESS
                     imwrite(save_address,melspec)
                     file= str(int(n))+' '+str((f))
                     f1.write(file+'\n')
@@ -125,7 +125,7 @@ for f,folder in enumerate(folders):
                                                              n_fft = 1600, hop_length = 192)                    
                     melspec=librosa.power_to_db(melspec,ref=np.max)
 
-                    save_address='/home/aih04/dataset/Augmented_train/'+str(int(n))+'.png'#CHANGE THIS ADDRESS
+                    save_address='/home/aih04/dataset/TrainData/'+str(int(n))+'.png'#CHANGE THIS ADDRESS
                     imwrite(save_address,melspec)
                     file= str(int(n))+' '+str((f))
                     f1.write(file+'\n')
@@ -137,7 +137,7 @@ for f,folder in enumerate(folders):
                                                              n_fft = 1600, hop_length = 192)                    
                     melspec=librosa.power_to_db(melspec,ref=np.max)
 
-                    save_address='/home/aih04/dataset/Augmented_train/'+str(int(n))+'.png'#CHANGE THIS ADDRESS
+                    save_address='/home/aih04/dataset/TrainData/'+str(int(n))+'.png'#CHANGE THIS ADDRESS
                     imwrite(save_address,melspec)
                     file= str(int(n))+' '+str((f))
                     f1.write(file+'\n')
