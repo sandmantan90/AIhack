@@ -3,7 +3,7 @@ import random
 train_percent=90
 
 
-dst = r'/home/aih04/LID/Augmented_trainInput.txt'
+dst = r'/home/aih04/dataset/Input.txt'
 
 f1 = open(dst,'r')
 f=f1.readlines()
@@ -12,19 +12,19 @@ f=f1.readlines()
 random.shuffle(f)
 
 index=int(len(f)*train_percent/100)
-ftrain=f[0:index]
-ftest=f[index:-1]
+ftrain=f[:index]
+ftest=f[index:]
 
-dst = r'/home/aih04/LID/AugTraintInput.txt'
+dst = r'/home/aih04/dataset/TrainInput.txt'
 
-f1 = open(dst,'w')
+f1 = open(dst,'w+')
 for i in ftrain:
    f1.write(i)
 f1.close()
 
-dst = r'/home/aih04/LID/AugTestInput.txt'
+dst = r'/home/aih04/dataset/TestInput.txt'
 
-f2 = open(dst,'w')
+f2 = open(dst,'w+')
 for i in ftest:
    f2.write(i)
 f2.close()
