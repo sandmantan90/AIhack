@@ -11,17 +11,17 @@ n=0#train file number counter
 m=0#train file number counter
 address=r"/home/aih04/dataset"
 os.chdir(address)
-
+sampling = 16000
 dst1 = r'/home/aih04/dataset/TrainInput.txt'
 dst2 = r'/home/aih04/dataset/TestInput.txt'
 noise,fs=librosa.load(r"/home/aih04/LID3/noise7.wav",sr=16000)#CHANGE THIS ADDRESS
-
+samples = sampling * dur
 
 def augment(data,noise=noise):
     
     die=np.random.randint(0,2)
     
-    if die==1
+    if die==1:
                
         noise_mag=np.random.uniform(0,.1)
         data1=change_pitch(data,1.5)
@@ -69,7 +69,7 @@ def stretch(data, rate=2):
     if len(data)>input_length:
         data = data[:input_length]
     else:
-        while len(data)<fs*dur:
+        while len(data)<samples:
             data=np.concatenate((data,data),axis=0)
 
         data=data[0:input_length]
@@ -86,8 +86,7 @@ for f,folder in enumerate(folders):
             if (os.path.splitext(fil)[1]=='.wav'):
                 audio,fs=librosa.load(load_address,sr=16000)
                 
-                samples=fs*dur                
-                
+                samples=fs*dur
                 noFrames = 0
                 if len(audio)<samples:
                     while len(audio)<samples:
@@ -104,21 +103,29 @@ for f,folder in enumerate(folders):
                     noFrames = int(np.floor(len(audio) / samples))
                     audio = audio[:noFrames*samples]
 
-             
-                for j in range(int(noFrames)):
-                    clip = audio[j*samples:(j+1)*samples]   
-                                                       
-                    val=np.random.uniform(0,1)
-                    
-                    if val<.9:
-                        clip1,clip2 = augment(clip)
-                        
-                        #for clip
-                        melspec = librosa.feature.melspectrogram(clip, sr = samples,
+                val=np.random.uniform(0,1)
+                if val>.9:
+                    for j in range(int(noFrames)):
+                        clip = audio[j*samples:(j+1)*samples]
+                        melspec = librosa.feature.melspectrogram(clip, sr = sampling,
                                                                  n_mels = 129, fmax = 5000,
                                                                  n_fft = 1600, hop_length = 192)                    
                         melspec=librosa.power_to_db(melspec,ref=np.max)
-
+                    save_address='/home/aih04/dataset/TestData/'+str(int(m))+'.png'#CHANGE THIS ADDRESS
+                    imwrite(save_address,melspec)
+                    file= str(int(m))+' '+str((f))
+                    f2.write(file+'\n')
+                    m+=1
+                        
+                else:
+                    for j in range(int(noFrames)):
+                        clip = audio[j*samples:(j+1)*samples]
+                        clip1,clip2 = augment(clip)
+                        #for clip
+                        melspec = librosa.feature.melspectrogram(clip, sr = sampling,
+                                                                 n_mels = 129, fmax = 5000,
+                                                                 n_fft = 1600, hop_length = 192)                    
+                        melspec=librosa.power_to_db(melspec,ref=np.max)
                         save_address='/home/aih04/dataset/TrainData/'+str(int(n))+'.png'#CHANGE THIS ADDRESS
                         imwrite(save_address,melspec)
                         file= str(int(n))+' '+str((f))
@@ -126,7 +133,7 @@ for f,folder in enumerate(folders):
                         n+=1
 
                         #for clip1
-                        melspec = librosa.feature.melspectrogram(clip1, sr = samples,
+                        melspec = librosa.feature.melspectrogram(clip1, sr = sampling,
                                                                  n_mels = 129, fmax = 5000,
                                                                  n_fft = 1600, hop_length = 192)                    
                         melspec=librosa.power_to_db(melspec,ref=np.max)
@@ -138,7 +145,7 @@ for f,folder in enumerate(folders):
                         n+=1
 
                         #for clip2
-                        melspec = librosa.feature.melspectrogram(clip2, sr = samples,
+                        melspec = librosa.feature.melspectrogram(clip2, sr = sampling,
                                                                  n_mels = 129, fmax = 5000,
                                                                  n_fft = 1600, hop_length = 192)                    
                         melspec=librosa.power_to_db(melspec,ref=np.max)
@@ -147,22 +154,6 @@ for f,folder in enumerate(folders):
                         imwrite(save_address,melspec)
                         file= str(int(n))+' '+str((f))
                         f1.write(file+'\n')
-                        n+=1 
-                    else:
-                        melspec = librosa.feature.melspectrogram(clip, sr = samples,
-                                                                 n_mels = 129, fmax = 5000,
-                                                                 n_fft = 1600, hop_length = 192)                    
-                        melspec=librosa.power_to_db(melspec,ref=np.max)
-
-                        save_address='/home/aih04/dataset/TestData/'+str(int(m))+'.png'#CHANGE THIS ADDRESS
-                        imwrite(save_address,melspec)
-                        file= str(int(m))+' '+str((f))
-                        f2.write(file+'\n')
-                        m+=1
-
-                   
-                     
-                                                                   
+                        n+=1 ]
                 print(f,':',n,':',fil)
-                
 f1.close()
