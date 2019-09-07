@@ -5,6 +5,7 @@ import numpy as np
 import random
 
 dur=6#sec
+
 folders=['TAM','GUJ','MAR','HIN','TEL']
 n=0#file number counter
 address=r"/home/aih04/dataset"
@@ -16,17 +17,36 @@ noise,fs=librosa.load(r"/content/drive/My Drive/noise7.wav",sr=16000)#CHANGE THI
 
 def augment(data,noise=noise):
     
-    p = np.random.uniform(-1.5, 1.5)
-    s=np.random.uniform(.83, 1.23)
-    roll=np.random.uniform(0, len(data))
-    noise_mag=np.random.uniform(0,.1)
+    die=np.random.randint(0,2)
     
-    data=change_pitch(data,p)
-    data=stretch(data, s)
-    data= np.roll(data, int(roll))#make the content different
-    data+=noise[:dur*fs]*noise_mag
+    if die==1
+               
+        noise_mag=np.random.uniform(0,.1)
+        data1=change_pitch(data,1.5)
+        data1=stretch(data1, 1.23)
+        data1= np.roll(data1, int(len(data)/3))#make the content different
+        data1+=noise[:len(data1)]*noise_mag
+        
+        noise_mag=np.random.uniform(0,.1)
+        data2=change_pitch(data,-1.5)
+        data2=stretch(data2, .83)
+        data2= np.roll(data2, int(2*len(data)/3))#make the content different
+        data2+=noise[:len(data2)]*noise_mag
+        
+    else:
+        noise_mag=np.random.uniform(0,.1)
+        data1=change_pitch(data,1.5)
+        data1=stretch(data1, .83)
+        data1= np.roll(data1, int(len(data)/3))#make the content different
+        data1+=noise[:len(data1)]*noise_mag
+        
+        noise_mag=np.random.uniform(0,.1)
+        data2=change_pitch(data,-1.5)
+        data2=stretch(data2, 1.23)
+        data2= np.roll(data2, int(2*len(data)/3))#make the content different
+        data2+=noise[:len(data2)]*noise_mag
     
-    return(data)
+    return(data1,data2)
 
     
 def change_pitch(data, semitone=1):
@@ -62,23 +82,67 @@ for f,folder in enumerate(folders):
             load_address=address+'/'+folder+'/'+fil
             if (os.path.splitext(fil)[1]=='.wav'):
                 audio,fs=librosa.load(load_address,sr=16000)
-
-                while len(audio)<fs*dur:
-                    audio=np.concatenate((audio,audio),axis=0)
-
-                audio=audio[0:fs*dur]
-                audio=augment(audio)             
-                              
-                                
-                S = librosa.feature.melspectrogram(audio, sr=fs, n_mels=129, fmax=5000,n_fft=1600, hop_length=192)
-                S=librosa.power_to_db(S,ref=np.max)
                 
-                save_address='/home/aih04/dataset/Augmented_train/'+str(int(n))+'.png'#CHANGE THIS ADDRESS
-                imwrite(save_address,S)
-                file= str(int(n))+' '+str((f))
-                f1.write(file+'\n')
-                n+=1
-                                                
+                samples=fs*dur                
+                
+                noFrames = 0
+                if len(audio)<samples:
+                    while len(audio)<samples:
+                        audio = np.concatenate((audio,audio), axis=0)
+                    audio = audio[:samples]
+                    noFrames = 1
+
+                elif (len(audio) % samples > samples*0.5):
+                    noFrames = int(np.ceil(len(audio) / samples))
+                    audio = np.concatenate((audio,audio), axis=0)
+                    audio = audio[:noFrames*samples]
+
+                elif (len(audio) % samples < samples*0.5):
+                    noFrames = int(np.floor(len(audio) / samples))
+                    audio = audio[:noFrames*samples]
+
+             
+                for j in range(int(noFrames)):
+                    clip = audio[j*samples:(j+1)*samples]   
+                    
+                    clip1,clip2 = augment(clip)
+                    
+                    #for clip
+                    melspec = librosa.feature.melspectrogram(clip, sr = samples,
+                                                             n_mels = 129, fmax = 5000,
+                                                             n_fft = 1600, hop_length = 192)                    
+                    melspec=librosa.power_to_db(melspec,ref=np.max)
+
+                    save_address='/home/aih04/dataset/Augmented_train/'+str(int(n))+'.png'#CHANGE THIS ADDRESS
+                    imwrite(save_address,melspec)
+                    file= str(int(n))+' '+str((f))
+                    f1.write(file+'\n')
+                    n+=1
+                    
+                    #for clip1
+                    melspec = librosa.feature.melspectrogram(clip1, sr = samples,
+                                                             n_mels = 129, fmax = 5000,
+                                                             n_fft = 1600, hop_length = 192)                    
+                    melspec=librosa.power_to_db(melspec,ref=np.max)
+
+                    save_address='/home/aih04/dataset/Augmented_train/'+str(int(n))+'.png'#CHANGE THIS ADDRESS
+                    imwrite(save_address,melspec)
+                    file= str(int(n))+' '+str((f))
+                    f1.write(file+'\n')
+                    n+=1
+                    
+                    #for clip2
+                    melspec = librosa.feature.melspectrogram(clip2, sr = samples,
+                                                             n_mels = 129, fmax = 5000,
+                                                             n_fft = 1600, hop_length = 192)                    
+                    melspec=librosa.power_to_db(melspec,ref=np.max)
+
+                    save_address='/home/aih04/dataset/Augmented_train/'+str(int(n))+'.png'#CHANGE THIS ADDRESS
+                    imwrite(save_address,melspec)
+                    file= str(int(n))+' '+str((f))
+                    f1.write(file+'\n')
+                    n+=1        
+                                                                   
                 print(f,':',n,':',fil)
                 
 f1.close()
